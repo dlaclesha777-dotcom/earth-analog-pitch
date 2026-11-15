@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Earth Analog Explorer — pitch deck</title>
+<meta name="description" content="Pitch deck for Earth Analog Explorer, a NASA Space Apps Challenge 2026 project (Earth Analog challenge).">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<!-- Fonts are optional: the deck falls back to system fonts when offline. -->
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&family=Instrument+Serif:ital@1&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<script>
+/* ==========================================================================
+   CONFIG — edit this block only. Empty strings show an orange placeholder.
+   ========================================================================== */
+window.CONFIG = {
+   team: {
+    name:  'N`FF-51',                       // e.g. 'Neogaia'
+    email: 'studyvishka@gmail.com',                       // e.g. 'team@example.com'
+    whyUs: '',                       // slide 7: one line on why the team can continue
+    members: [                       // exactly 4 = 4 stars of the constellation
+      { name: 'Kravchenko Max', role: 'Developer, BugFixer' },
+      { name: 'Bovda Roman', role: 'Designer, Revers Engineer' },
+      { name: 'Vakulko Andrii', role: 'OSINT-specialist, Researhcer' },
+      { name: 'Lagodiuk Max', role: 'OSINT-Specialist, Researhcer' }
+    ]
+  },
+  paths: {
+    emblem:        'assets/emblem.png',              // provided
+    shotGlobe:     'assets/screenshot-globe.jpg',    // provided (slide 3)
+    shotCompare:   'assets/screenshot-compare.jpg',  // provided (slide 4 poster / print)
+    demoVideo: 'assets/demo.mp4',                               // put file at assets/demo.mp4, then set 'assets/demo.mp4'
+    teamPhoto: 'assets/team.jpg'                               // put file at assets/team.jpg, then set 'assets/team.jpg'
+  },
+  demoUrl: 'https://max1-ce.github.io/earth-analog/',
+  iframeTimeoutMs: 9000,             // after this the deck switches Live -> Video
+  // Colours are also declared as CSS variables in :root below (keep in sync).
+  colors: { bg: '#0B1426', earth: '#22C5D6', mars: '#FF8A3D', moon: '#C9D1DB', text: '#F4F7FA', muted: '#8FA3BF' }
+};
+document.documentElement.classList.add('js');
+</script>
+
+<style>
+/* ---------- Tokens ---------- */
+:root{
+  --bg:#0B1426; --panel:#F4F7FA; --earth:#22C5D6; --mars:#FF8A3D; --moon:#C9D1DB;
+  --text:#F4F7FA; --muted:#8FA3BF; --line:rgba(143,163,191,.28); --card:rgba(20,34,62,.72);
+  --sans:"Space Grotesk",ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --serif:"Instrument Serif",Georgia,"Times New Roman",serif;
+  --hand:"Caveat","Comic Sans MS","Segoe Print",cursive;
+  --s:1;            /* stage scale, set by JS */
+  --shift:0;        /* slide index, set by JS (parallax) */
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);overflow:hidden;-webkit-font-smoothing:antialiased}
+a{color:var(--earth)}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--earth);outline-offset:3px;border-radius:6px}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* ---------- Shared animated background ---------- */
+#sky{position:fixed;inset:0;width:100%;height:100%;z-index:0;
+  background:radial-gradient(120% 90% at 70% 10%,#14254a 0%,#0B1426 55%,#070d1b 100%)}
+.bg-planets{position:fixed;inset:0;z-index:1;pointer-events:none;
+  transform:translate3d(calc(var(--shift)*-1.4vw),0,0);transition:transform 1.1s cubic-bezier(.2,.7,.2,1)}
+.orb{position:absolute;border-radius:50%;pointer-events:auto;transition:box-shadow .5s,filter .5s}
+.orb.earth{background:
+  radial-gradient(60% 40% at 62% 58%,rgba(16,120,110,.55),transparent 70%),
+  radial-gradient(35% 28% at 30% 40%,rgba(18,130,118,.5),transparent 70%),
+  radial-gradient(circle at 30% 28%,#9af0f7 0%,#22C5D6 34%,#0e6f86 68%,#06303f 100%);
+  box-shadow:0 0 40px rgba(34,197,214,.18),inset -18px -22px 50px rgba(3,12,28,.75)}
+.orb.mars{background:
+  radial-gradient(30% 22% at 60% 62%,rgba(120,44,12,.5),transparent 70%),
+  radial-gradient(circle at 30% 28%,#ffc79b 0%,#FF8A3D 36%,#b04a1a 72%,#55200a 100%);
+  box-shadow:0 0 30px rgba(255,138,61,.16),inset -14px -16px 36px rgba(20,6,2,.75)}
+.orb.moon{background:
+  radial-gradient(14% 14% at 60% 36%,rgba(90,100,116,.55),transparent 75%),
+  radial-gradient(10% 10% at 36% 62%,rgba(90,100,116,.5),transparent 75%),
+  radial-gradient(circle at 30% 28%,#ffffff 0%,#C9D1DB 40%,#7c8796 80%,#4b5462 100%);
+  box-shadow:0 0 24px rgba(201,209,219,.14),inset -8px -10px 22px rgba(10,14,24,.7)}
+.orb.earth:hover{box-shadow:0 0 90px rgba(34,197,214,.6),inset -18px -22px 50px rgba(3,12,28,.6);filter:brightness(1.12)}
+.orb.mars:hover{box-shadow:0 0 70px rgba(255,138,61,.6),inset -14px -16px 36px rgba(20,6,2,.6);filter:brightness(1.12)}
+.orb.moon:hover{box-shadow:0 0 60px rgba(201,209,219,.6),inset -8px -10px 22px rgba(10,14,24,.55);filter:brightness(1.1)}
+.bg-planets .earth{width:54vmin;height:54vmin;left:-31vmin;bottom:-36vmin;opacity:.75}
+.bg-planets .mars{width:20vmin;height:20vmin;right:-7vmin;top:-8vmin;opacity:.8}
+.bg-planets .moon{width:5vmin;height:5vmin;right:9vw;bottom:9vh;opacity:.65}
+body.bg-off .bg-planets{display:none}
+
+/* ---------- Stage (fixed 1600x900 design, scaled to fit) ---------- */
+.viewport{position:fixed;left:0;right:0;top:0;bottom:56px;z-index:2;pointer-events:none}
+.stage{position:absolute;left:50%;top:50%;width:1600px;height:900px;
+  transform:translate(-50%,-50%) scale(var(--s));transform-origin:center}
+.slide{position:absolute;inset:0;padding:58px 88px 40px;display:flex;flex-direction:column;pointer-events:none}
+.slide a,.slide button,.slide iframe,.slide video,.slide .hit{pointer-events:auto}
+.js .slide{opacity:0;visibility:hidden;transform:translate3d(70px,0,0);
+  transition:opacity .6s ease,transform .8s cubic-bezier(.2,.7,.2,1),visibility 0s .6s}
+.js .slide.before{transform:translate3d(-70px,0,0)}
+.js .slide.active{opacity:1;visibility:visible;transform:none;transition-delay:0s}
+
+/* entrance animation (stagger with --i) */
+.js [data-in]{opacity:0}
+.js .slide.active [data-in]{animation:fadeUp .7s cubic-bezier(.2,.7,.2,1) both;animation-delay:calc(var(--i,0)*90ms + 180ms)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(26px)}to{opacity:1;transform:none}}
+
+/* ---------- Typography ---------- */
+.kicker{font-size:19px;letter-spacing:.2em;text-transform:uppercase;color:var(--earth);font-weight:600;margin:0 0 14px}
+h1{font-size:92px;line-height:.98;margin:0;font-weight:700;letter-spacing:-.02em}
+h2{font-size:60px;line-height:1.04;margin:0 0 30px;font-weight:700;letter-spacing:-.02em;max-width:1300px}
+em.e,em.m,em.l{font-family:var(--serif);font-style:italic;font-weight:400;letter-spacing:0}
+em.e,.c-earth{color:var(--earth)} em.m,.c-mars{color:var(--mars)} em.l,.c-moon{color:var(--moon)}
+p{margin:0}
+.lead{font-size:34px;line-height:1.25;max-width:760px}
+.muted{color:var(--muted)}
+.tag{display:inline-block;font-size:15px;letter-spacing:.12em;text-transform:uppercase;font-weight:600;
+  padding:4px 10px;border-radius:999px;border:1.5px solid currentColor;vertical-align:middle;white-space:nowrap}
+.tag.wip{color:var(--mars)} .tag.ok{color:var(--earth)}
+
+/* bullets */
+.points{list-style:none;margin:0;padding:0;display:grid;gap:22px}
+.points li{font-size:29px;line-height:1.28;padding-left:30px;position:relative;max-width:700px}
+.points li::before{content:"";position:absolute;left:0;top:.5em;width:12px;height:12px;border-radius:50%;background:var(--earth)}
+.points li b{display:block;font-size:17px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:3px}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:56px;flex:1;min-height:0;align-items:center}
+
+/* cards + chips */
+.card{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:24px 28px}
+.card h3{margin:0 0 8px;font-size:18px;letter-spacing:.16em;text-transform:uppercase;font-weight:600;color:var(--earth)}
+.card p{font-size:25px;line-height:1.28}
+.chips{display:flex;flex-wrap:wrap;gap:10px;list-style:none;margin:0;padding:0}
+.chips li{font-size:19px;padding:7px 14px;border-radius:999px;border:1px solid var(--line);background:rgba(20,34,62,.6);color:var(--text)}
+
+/* ---------- Placeholders (dashed bright orange) ---------- */
+.ph{display:flex;align-items:center;justify-content:center;text-align:center;border:3px dashed var(--mars);
+  background:rgba(255,138,61,.14);color:#ffd9bf;border-radius:14px;font-size:19px;font-weight:600;line-height:1.25;padding:10px 14px}
+.ph-inline{display:inline-block;border:2.5px dashed var(--mars);background:rgba(255,138,61,.14);color:#ffd9bf;
+  border-radius:10px;padding:2px 12px;font-weight:600;font-size:.82em}
+.media{position:relative;margin:0}
+.media img,.media video{display:block;width:100%;height:100%;object-fit:cover}
+.media .ph{position:absolute;inset:0;display:none}
+.media.missing .ph{display:flex}
+.media.missing img{display:none}
+
+/* ---------- Browser / device frame ---------- */
+.browser{border-radius:18px;overflow:hidden;border:1px solid var(--line);background:#101c36;box-shadow:0 30px 80px rgba(0,0,0,.5)}
+.browser-bar{display:flex;align-items:center;gap:12px;padding:10px 16px;background:#16264a;font-size:16px;color:var(--muted)}
+.browser-bar i{width:11px;height:11px;border-radius:50%;background:#3a4c72;display:block}
+.browser-bar .url{flex:1;background:#0d1730;border-radius:999px;padding:5px 14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* ---------- Slide 1 ---------- */
+#s1 .cols{grid-template-columns:1.08fr .92fr}
+.emblem-wrap{perspective:900px;width:170px;height:170px;margin-bottom:26px}
+.emblem{width:100%;height:100%;border-radius:38px;animation:turnY 14s linear infinite;box-shadow:0 0 50px rgba(34,197,214,.3)}
+@keyframes turnY{from{transform:rotateY(0)}to{transform:rotateY(360deg)}}
+.emblem-wrap .ph{border-radius:38px}
+.tagline{font-family:var(--serif);font-style:italic;font-size:44px;line-height:1.1;margin:18px 0 34px}
+.meta{display:grid;grid-template-columns:auto 1fr;gap:12px 24px;margin:0;font-size:25px;align-items:center}
+.meta dt{font-size:16px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.meta dd{margin:0}
+.crew h3{font-size:18px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);font-weight:600;margin:0 0 6px;text-align:center}
+.constellation{position:relative;width:620px;height:400px;margin:0 auto}
+.constellation svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.constellation line{stroke:var(--moon);stroke-opacity:.3;stroke-width:1.5;stroke-dasharray:3 7;transition:stroke-opacity .4s,stroke .4s}
+.constellation:hover line,.constellation:focus-within line{stroke:var(--earth);stroke-opacity:.9}
+.star-btn{position:absolute;width:56px;height:56px;margin:-28px 0 0 -28px;border:0;background:none;padding:0;border-radius:50%}
+.star-btn::before{content:"";position:absolute;inset:18px;border-radius:50%;background:#fff;
+  box-shadow:0 0 12px 3px rgba(255,255,255,.7),0 0 30px 8px rgba(34,197,214,.35);transition:transform .3s,box-shadow .3s;animation:twinkle 3.6s ease-in-out infinite}
+.star-btn:nth-of-type(2)::before{animation-delay:.9s}.star-btn:nth-of-type(3)::before{animation-delay:1.7s}.star-btn:nth-of-type(4)::before{animation-delay:2.5s}
+@keyframes twinkle{50%{opacity:.65}}
+.star-btn:hover::before,.star-btn:focus-visible::before{transform:scale(1.5);box-shadow:0 0 16px 5px #fff,0 0 46px 16px rgba(34,197,214,.75)}
+.star-label{position:absolute;width:150px;margin-left:-75px;text-align:center;font-size:19px;line-height:1.2;font-weight:600}
+.star-label .role{display:block;font-weight:400;color:var(--muted);font-size:16px;margin-top:4px;opacity:.75;transition:opacity .3s,color .3s}
+.star-label.on .role{opacity:1;color:var(--earth)}
+.star-label .ph-inline{font-size:15px;padding:2px 6px}
+.dust{position:absolute;width:5px;height:5px;border-radius:50%;background:#fff;pointer-events:none;animation:dust var(--t,1.4s) ease-in forwards}
+@keyframes dust{from{opacity:1;transform:translate(0,0) scale(1)}to{opacity:0;transform:translate(var(--dx),var(--dy)) scale(.3)}}
+
+/* ---------- Slide 2 ---------- */
+.versus{display:grid;gap:44px;justify-items:center}
+.versus-row{display:flex;align-items:center;gap:30px}
+.versus .orb{position:relative;flex:none}
+.versus .q{font-family:var(--serif);font-style:italic;font-size:76px;color:var(--muted);width:130px;text-align:center;line-height:1}
+.versus figcaption{font-size:22px;color:var(--muted);text-align:center;max-width:520px;line-height:1.3}
+.orb-cap{display:grid;justify-items:center;gap:10px;font-size:18px;letter-spacing:.14em;text-transform:uppercase;font-weight:600}
+
+/* ---------- Slide 3 ---------- */
+.stats{display:flex;gap:38px;margin:26px 0 28px;list-style:none;padding:0}
+.stats li{font-size:18px;color:var(--muted);line-height:1.2;max-width:130px}
+.stats b{display:block;font-size:62px;line-height:1;color:var(--mars);font-weight:700}
+#s3 .cols{grid-template-columns:.92fr 1.08fr}
+#s3 .points li{font-size:26px}
+.shot{aspect-ratio:1600/770}
+.caption{font-size:17px;color:var(--muted);margin-top:12px}
+
+/* ---------- Slide 4 ---------- */
+#s4 .cols{grid-template-columns:400px 1fr;gap:40px;align-items:start}
+.steps{list-style:none;margin:0 0 26px;padding:0;display:grid;gap:16px;counter-reset:st}
+.steps li{counter-increment:st;position:relative;padding:16px 18px 16px 70px;font-size:23px;line-height:1.25;
+  background:var(--card);border:1px solid var(--line);border-radius:18px}
+.steps li::before{content:counter(st);position:absolute;left:18px;top:50%;transform:translateY(-50%);width:38px;height:38px;border-radius:50%;
+  background:var(--earth);color:#062028;font-weight:700;display:grid;place-items:center;font-size:20px}
+.steps b{display:block;font-size:15px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.demo-view{position:relative;width:1000px;height:562px;background:#070d1b;overflow:hidden}
+.demo-view iframe{position:absolute;left:0;top:0;width:1400px;height:787px;border:0;transform:scale(.7143);transform-origin:0 0;background:#070d1b}
+.demo-view .media{position:absolute;inset:0}
+.demo-view .media video{object-fit:cover;object-position:top}
+.demo-view .media img{object-fit:contain}
+.demo-view .media.missing img{display:block;opacity:.7}
+.demo-view .media.missing .ph{inset:auto 24px 24px 24px;padding:16px}
+.demo-view [hidden]{display:none}
+.demo-print{display:none}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:999px;overflow:hidden}
+.seg button{border:0;background:none;padding:5px 16px;font-size:16px;font-weight:600;color:var(--muted)}
+.seg button[aria-pressed="true"]{background:var(--earth);color:#062028}
+.btn{display:inline-block;text-decoration:none;font-weight:600;font-size:16px;padding:6px 16px;border-radius:999px;background:var(--mars);color:#2a1202}
+.demo-status{font-size:16px;color:var(--muted);margin-top:10px;min-height:20px}
+
+/* ---------- Slide 5 ---------- */
+.flow{display:grid;grid-template-columns:480px 150px 300px 150px 1fr;align-items:stretch;height:352px;margin-bottom:22px}
+.flow-col{display:grid;gap:12px}
+.src{display:flex;flex-direction:column;justify-content:center;padding:8px 18px;border-radius:16px;background:var(--card);border:1px solid var(--line);border-left:6px solid var(--c,var(--earth))}
+.src strong{font-size:21px;line-height:1.15}
+.src span{font-size:17px;color:var(--muted);line-height:1.25}
+.flow svg{width:100%;height:100%}
+.flow path{fill:none;stroke-width:2.5;stroke-dasharray:4 10;stroke-linecap:round;vector-effect:non-scaling-stroke;animation:flow 1.6s linear infinite}
+@keyframes flow{to{stroke-dashoffset:-28}}
+.app-node{align-self:center;text-align:center;padding:26px 18px;border-radius:26px;border:2px solid var(--earth);
+  background:radial-gradient(circle at 50% 0,rgba(34,197,214,.28),rgba(20,34,62,.85) 70%);box-shadow:0 0 50px rgba(34,197,214,.22)}
+.app-node strong{display:block;font-size:27px;line-height:1.1;margin-bottom:8px}
+.app-node span{font-size:17px;color:var(--muted);line-height:1.3;display:block}
+.out-col{align-content:center;gap:22px}
+#s5 h2{margin-bottom:22px}
+#s5 .points{grid-template-columns:repeat(3,1fr);gap:26px}
+#s5 .points li{font-size:22px;max-width:none}
+.credit{font-size:16px;color:var(--muted);margin-top:auto;padding-top:12px}
+
+/* ---------- Slide 6 ---------- */
+#s6 .cols{grid-template-columns:1fr 520px;align-items:stretch}
+.impact-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-content:center}
+.impact-zone{position:relative}
+.impact-zone .mars-big{position:absolute;right:10px;bottom:30px;width:310px;height:310px}
+.crater{position:absolute;left:27%;top:24%;width:44px;height:30px;border-radius:50%;opacity:0;
+  background:radial-gradient(ellipse at 50% 40%,#3d1505 0%,#6e2a0c 55%,rgba(255,190,140,.7) 70%,transparent 76%);transition:opacity .4s}
+.crater.on{opacity:1}
+.meteor{position:absolute;left:8px;top:40px;width:96px;height:96px;border:0;background:none;padding:0;border-radius:50%;
+  animation:bob 3.2s ease-in-out infinite;z-index:3}
+.meteor svg{width:100%;height:100%;overflow:visible;filter:drop-shadow(0 0 10px rgba(255,138,61,.55))}
+@keyframes bob{50%{transform:translate(4px,7px) rotate(4deg)}}
+.meteor.fly{animation:none;transition:transform .85s cubic-bezier(.55,0,.95,.55),opacity .12s .82s;transform:translate(var(--mx,232px),var(--my,292px)) scale(.45);opacity:0}
+.meteor.gone{animation:none;opacity:0;transition:none}
+.hint{position:absolute;left:112px;top:0;width:170px;height:110px;pointer-events:none;animation:wob 2.4s ease-in-out infinite;transition:opacity .3s}
+@keyframes wob{50%{transform:rotate(-3deg) translateY(-4px)}}
+.hint text{font-family:var(--hand);font-size:44px;font-weight:700;fill:#0B1426}
+.hint.hide{opacity:0}
+.boom{position:absolute;left:34%;top:29%;width:0;height:0;pointer-events:none}
+.boom i{position:absolute;left:-4px;top:-4px;width:8px;height:8px;border-radius:50%;background:var(--mars);animation:dust .8s ease-out forwards}
+.boom .ring{position:absolute;left:-10px;top:-10px;width:20px;height:20px;border-radius:50%;border:3px solid #ffd9bf;animation:ring .7s ease-out forwards}
+@keyframes ring{to{transform:scale(6);opacity:0}}
+
+/* ---------- Slide 7 ---------- */
+#s7 .cols{grid-template-columns:1fr 430px;gap:36px;align-items:stretch}
+.status-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-content:center}
+.status-grid .card p{font-size:22px}
+.status-grid .card.wip h3{color:var(--mars)}
+.side{display:grid;gap:18px;align-content:center}
+.result .big{font-size:76px;font-weight:700;color:var(--mars);line-height:1}
+.result p{font-size:20px}
+.bars{display:grid;gap:5px;margin-top:14px}
+.bar{display:grid;grid-template-columns:104px 1fr 40px;gap:8px;align-items:center;font-size:15px;color:var(--muted)}
+.bar i{display:block;height:8px;border-radius:4px;background:rgba(143,163,191,.2);position:relative;overflow:hidden}
+.bar i::after{content:"";position:absolute;inset:0;width:calc(var(--v)*100%);background:var(--mars);border-radius:4px}
+.team-photo{height:150px;border-radius:18px;overflow:hidden}
+
+/* ---------- Controls ---------- */
+.controls{position:fixed;left:0;right:0;bottom:0;height:56px;z-index:5;display:flex;align-items:center;justify-content:center;gap:14px;
+  padding:0 16px;background:linear-gradient(transparent,rgba(7,13,27,.85))}
+.ctl{border:1px solid var(--line);background:rgba(20,34,62,.8);border-radius:999px;height:36px;min-width:36px;padding:0 12px;font-size:15px;font-weight:600}
+.ctl:hover{border-color:var(--earth)}
+.dots{display:flex;gap:4px}
+.dots button{width:26px;height:26px;border:0;background:none;padding:0;display:grid;place-items:center}
+.dots button::before{content:"";width:10px;height:10px;border-radius:50%;background:var(--muted);opacity:.5;transition:all .3s}
+.dots button[aria-current="true"]::before{background:var(--earth);opacity:1;transform:scale(1.4)}
+.counter{font-size:15px;color:var(--muted);min-width:38px;text-align:center;font-variant-numeric:tabular-nums}
+.spacer{flex:1;max-width:60px}
+
+/* ---------- No-JS fallback: plain scrolling document ---------- */
+html:not(.js) body{overflow:auto}
+html:not(.js) .viewport{position:static}
+html:not(.js) .stage{position:static;transform:none;margin:0 auto;height:auto}
+html:not(.js) .slide{position:relative;height:900px}
+html:not(.js) .controls{display:none}
+
+/* ---------- Reduced motion ---------- */
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  .js [data-in]{opacity:1}
+}
+body.bg-off .emblem,body.bg-off .star-btn::before,body.bg-off .flow path{animation-play-state:paused}
+
+/* ---------- Print / PDF: one slide per page ---------- */
+@page{size:1600px 900px;margin:0}
+@media print{
+  html,body{height:auto;overflow:visible;background:#0B1426}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact;animation:none!important;transition:none!important}
+  #sky,.bg-planets,.controls,.hint,.meteor,.demo-status{display:none!important}
+  .viewport{position:static}
+  .stage{position:static;transform:none!important;width:1600px;height:auto}
+  .js .slide,.slide{position:relative;inset:auto;width:1600px;height:900px;opacity:1!important;visibility:visible!important;transform:none!important;
+    background:#0B1426;break-after:page;page-break-after:always;overflow:hidden}
+  .js [data-in]{opacity:1!important}
+  .demo-view iframe,.demo-view .media{display:none!important}
+  .demo-print{display:block;width:100%;height:100%;object-fit:contain}
+  .crater{opacity:1}
+}
+</style>
+</head>
+<body>
+
+<!-- Shared animated background: starfield canvas + CSS planets -->
+<canvas id="sky" aria-hidden="true"></canvas>
+<div class="bg-planets" aria-hidden="true">
+  <div class="orb earth"></div>
+  <div class="orb mars"></div>
+  <div class="orb moon"></div>
+</div>
+
+<main class="viewport" id="deck" aria-label="Earth Analog Explorer pitch deck">
+<div class="stage">
+
+<!-- ================= 1. PROJECT & TEAM ================= -->
+<section class="slide" id="s1" aria-label="Slide 1 of 7: Project and team">
+  <div class="cols">
+    <div>
+      <div class="emblem-wrap media" data-in style="--i:0">
+        <!-- FILE: assets/emblem.png (PNG, square, transparent or rounded) -->
+        <img class="emblem" data-src="paths.emblem" alt="Team emblem: orange angular mark inside a teal orbit ring">
+        <span class="ph">INSERT: team emblem (PNG, transparent)</span>
+      </div>
+      <p class="kicker" data-in style="--i:1">NASA Space Apps Challenge 2026</p>
+      <h1 data-in style="--i:2"><span class="c-earth">Earth</span> Analog Explorer</h1>
+      <p class="tagline" data-in style="--i:3">Where on <span class="c-earth">Earth</span> is most like <span class="c-mars">Mars</span> or <span class="c-moon">the Moon</span>?</p>
+      <dl class="meta" data-in style="--i:4">
+        <dt>Team</dt><dd><span class="ph-inline" data-cfg="team.name">INSERT: team name (working name: Neogaia)</span></dd>
+        <dt>Challenge</dt><dd>Earth Analog</dd>
+        <dt>Contact</dt><dd><span class="ph-inline" data-cfg="team.email">INSERT: team contact email</span></dd>
+      </dl>
+    </div>
+    <div class="crew" data-in style="--i:5">
+      <h3>Our crew · 4 stars, 4 people</h3>
+      <div class="constellation hit" id="constellation">
+        <svg viewBox="0 0 620 400" aria-hidden="true">
+          <line x1="80" y1="150" x2="235" y2="70"/><line x1="235" y1="70" x2="390" y2="170"/><line x1="390" y1="170" x2="540" y2="90"/>
+        </svg>
+        <!-- Stars + labels are generated from CONFIG.team.members -->
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 2. PROBLEM & AUDIENCE ================= -->
+<section class="slide" id="s2" aria-label="Slide 2 of 7: Problem and target audience">
+  <p class="kicker" data-in>02 · Problem &amp; audience</p>
+  <h2 data-in style="--i:1">"Mars-like" places on Earth: how alike, really?</h2>
+  <div class="cols">
+    <ul class="points">
+      <li data-in style="--i:2"><b>Problem</b>Missions are rehearsed at analog sites on Earth, yet "similar" is hard to see and compare.</li>
+      <li data-in style="--i:3"><b>Who faces it</b>Students, educators and space enthusiasts; early field-test planners <span class="tag wip">concept</span></li>
+      <li data-in style="--i:4"><b>Why it matters</b>Every analog matches only some conditions. Missing the gaps leads to wrong conclusions.</li>
+      <li data-in style="--i:5"><b>Challenge link</b>Earth Analog: compare places on Earth with Mars and the Moon.</li>
+    </ul>
+    <figure class="versus" data-in style="--i:4" aria-label="Earth compared with Mars and with the Moon, similarity unknown">
+      <div class="versus-row">
+        <div class="orb-cap c-earth"><div class="orb earth hit" style="width:150px;height:150px"></div>Earth</div>
+        <div class="q" aria-hidden="true">≈ ?</div>
+        <div class="orb-cap c-mars"><div class="orb mars hit" style="width:120px;height:120px"></div>Mars</div>
+      </div>
+      <div class="versus-row">
+        <div class="orb-cap c-earth"><div class="orb earth hit" style="width:150px;height:150px"></div>Earth</div>
+        <div class="q" aria-hidden="true">≈ ?</div>
+        <div class="orb-cap c-moon"><div class="orb moon hit" style="width:96px;height:96px"></div>Moon</div>
+      </div>
+      <figcaption>A desert can match Mars in terrain and miss it completely in temperature.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- ================= 3. OUR SOLUTION ================= -->
+<section class="slide" id="s3" aria-label="Slide 3 of 7: Our solution">
+  <p class="kicker" data-in>03 · Our solution</p>
+  <h2 data-in style="--i:1">An atlas that <em class="e">scores</em> the similarity</h2>
+  <div class="cols">
+    <div>
+      <p class="lead" data-in style="--i:2">Pick a place on Earth and see, criterion by criterion, how close it is to a site on Mars or the Moon.</p>
+      <ul class="stats" data-in style="--i:3" aria-label="What the prototype contains">
+        <li><b>12</b>Earth analog sites</li>
+        <li><b>6</b>Mars &amp; Moon reference sites</li>
+        <li><b>8</b>similarity criteria</li>
+        <li><b>2</b>languages (UA / EN)</li>
+      </ul>
+      <ul class="points">
+        <li data-in style="--i:4"><b>What we built</b>A web app with Globe, Map and Analysis views.</li>
+        <li data-in style="--i:5"><b>What is original</b>It also shows where the analogy breaks, and how to close the gap.</li>
+      </ul>
+    </div>
+    <div data-in style="--i:3">
+      <div class="browser">
+        <div class="browser-bar" aria-hidden="true"><i></i><i></i><i></i><span class="url">max1-ce.github.io/earth-analog</span></div>
+        <figure class="media shot">
+          <!-- FILE: assets/screenshot-globe.jpg (interface screenshot, ~1600 px wide) -->
+          <img data-src="paths.shotGlobe" alt="Earth Analog Explorer, Globe view: a 3D Earth next to the question 'Where on Earth is most like Mars or the Moon?'">
+          <span class="ph">INSERT: interface screenshot (assets/screenshot-globe.jpg)</span>
+        </figure>
+      </div>
+      <p class="caption">Globe view of the live prototype. Each glowing point is an analog site.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 4. HOW IT WORKS ================= -->
+<section class="slide" id="s4" aria-label="Slide 4 of 7: How it works">
+  <p class="kicker" data-in>04 · How it works</p>
+  <h2 data-in style="--i:1">Click a point, get a comparison</h2>
+  <div class="cols">
+    <div>
+      <ol class="steps">
+        <li data-in style="--i:2"><b>You do</b>Click a glowing point on the globe or map.</li>
+        <li data-in style="--i:3"><b>You get</b>A similarity score and a radar of 8 criteria.</li>
+        <li data-in style="--i:4"><b>Go deeper</b>Compare maps side by side, check the limits.</li>
+      </ol>
+      <ul class="chips" data-in style="--i:5" aria-label="Key technologies">
+        <li>Leaflet maps</li><li>globe.gl</li><li>Chart.js</li><li>CSV data</li><li>Python metrics</li>
+      </ul>
+    </div>
+    <div data-in style="--i:3">
+      <div class="browser">
+        <div class="browser-bar">
+          <i aria-hidden="true"></i><i aria-hidden="true"></i><i aria-hidden="true"></i>
+          <span class="url">max1-ce.github.io/earth-analog</span>
+          <span class="seg" role="group" aria-label="Prototype source">
+            <button type="button" id="modeLive" aria-pressed="true">Live</button>
+            <button type="button" id="modeVideo" aria-pressed="false">Video</button>
+          </span>
+          <a class="btn" id="openDemo" href="https://max1-ce.github.io/earth-analog/" target="_blank" rel="noopener">Open live demo</a>
+        </div>
+        <div class="demo-view">
+          <!-- Live prototype (src is set by JS when the slide opens) -->
+          <iframe id="demoFrame" title="Earth Analog Explorer live prototype" loading="lazy" referrerpolicy="no-referrer"></iframe>
+          <div class="media" id="demoVideoBox" hidden>
+            <!-- FILE: assets/demo.mp4 (muted screen recording, 16:9, 20–40 s) → then set CONFIG.paths.demoVideo -->
+            <video id="demoVideo" muted loop playsinline preload="none" aria-label="Screen recording of the Earth Analog Explorer prototype"></video>
+            <img data-src="paths.shotCompare" alt="Earth Analog Explorer, Map view in Compare mode: an Earth map with analog markers beside a Mars map with a target site">
+            <span class="ph">INSERT: demo video (assets/demo.mp4, muted, 16:9)</span>
+          </div>
+          <img class="demo-print" data-src="paths.shotCompare" alt="Earth Analog Explorer, Compare mode: Earth map next to a Mars map">
+        </div>
+      </div>
+      <p class="demo-status" id="demoStatus" role="status"></p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 5. NASA DATA & SCIENCE ================= -->
+<section class="slide" id="s5" aria-label="Slide 5 of 7: NASA data and scientific basis">
+  <p class="kicker" data-in>05 · NASA data &amp; scientific basis</p>
+  <h2 data-in style="--i:1">NASA imagery in, comparison out</h2>
+  <div class="flow" data-in style="--i:2" role="img" aria-label="Data flow: four NASA imagery sources feed Earth Analog Explorer, which outputs side-by-side maps and a similarity score by eight criteria">
+    <div class="flow-col">
+      <div class="src" style="--c:var(--mars)"><strong>NASA Mars Trek</strong><span>Mars basemap: Viking MDIM 2.1 colour mosaic (NASA/JPL/USGS)</span></div>
+      <div class="src" style="--c:var(--moon)"><strong>NASA Moon Trek</strong><span>Lunar basemap for the south-pole map</span></div>
+      <div class="src" style="--c:var(--earth)"><strong>NASA Visible Earth</strong><span>Blue Marble texture on the Earth globe</span></div>
+      <div class="src" style="--c:var(--moon)"><strong>NASA SVS · CGI Moon Kit</strong><span>Moon globe texture (LRO LROC)</span></div>
+    </div>
+    <svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M0 11 C60 11 40 50 100 50" stroke="#FF8A3D"/><path d="M0 37 C60 37 40 50 100 50" stroke="#C9D1DB"/>
+      <path d="M0 63 C60 63 40 50 100 50" stroke="#22C5D6"/><path d="M0 89 C60 89 40 50 100 50" stroke="#C9D1DB"/>
+    </svg>
+    <div class="app-node"><strong>Earth Analog Explorer</strong><span>12 Earth sites vs 6 real mission sites: Gale, Jezero, Phoenix, Shackleton, Malapert</span></div>
+    <svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M0 50 C60 50 40 30 100 30" stroke="#22C5D6"/><path d="M0 50 C60 50 40 70 100 70" stroke="#22C5D6"/>
+    </svg>
+    <div class="flow-col out-col">
+      <div class="src"><strong>Side-by-side maps</strong><span>Earth next to Mars or the Moon</span></div>
+      <div class="src"><strong>Similarity, 0 to 1</strong><span>Per site pair, across 8 criteria</span></div>
+    </div>
+  </div>
+  <ul class="points">
+    <li data-in style="--i:3"><b>Why it is sound</b>We compare measurable things: temperature, craters, slope, relief, ice, sunlight, rock.</li>
+    <li data-in style="--i:4"><b>Honest limits</b>Radiation, pressure and gravity stay out of the score and are shown as limits.</li>
+    <li data-in style="--i:5"><b>Partner data</b>CSA, ESA and JAXA resources are listed in the app <span class="tag wip">in progress</span></li>
+  </ul>
+  <p class="credit" data-in style="--i:6">NASA data/imagery. Earth basemap: © OpenStreetMap contributors. Use of NASA material does not imply NASA endorsement. Some site values are unverified placeholders.</p>
+</section>
+
+<!-- ================= 6. IMPACT & POTENTIAL ================= -->
+<section class="slide" id="s6" aria-label="Slide 6 of 7: Impact and potential">
+  <p class="kicker" data-in>06 · Impact &amp; potential</p>
+  <h2 data-in style="--i:1">Space rehearsal, made easy to <em class="m">see</em></h2>
+  <div class="cols">
+    <div class="impact-grid">
+      <div class="card" data-in style="--i:2"><h3>Benefit</h3><p>See at a glance where an analog holds and where it fails.</p></div>
+      <div class="card" data-in style="--i:3"><h3>Scale</h3><p>Open in any browser, in Ukrainian and English. No install.</p></div>
+      <div class="card" data-in style="--i:4"><h3>Where it applies</h3><p>Classrooms, outreach, analog-mission prep <span class="tag wip">concept</span></p></div>
+      <div class="card" data-in style="--i:5"><h3>Prospects</h3><p>Free, open-source tool. Partnerships with educators <span class="tag wip">concept</span></p></div>
+    </div>
+    <div class="impact-zone" data-in style="--i:4">
+      <button type="button" class="meteor" id="meteor" aria-label="Decorative: launch the meteorite at Mars">
+        <svg viewBox="0 0 96 96" aria-hidden="true">
+          <defs><linearGradient id="tail" x1="1" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#FF8A3D"/><stop offset="1" stop-color="#FF8A3D" stop-opacity="0"/></linearGradient></defs>
+          <path d="M60 44 L4 2 L44 60 Z" fill="url(#tail)"/>
+          <path d="M46 40 l16 -4 l14 8 l4 16 l-9 14 l-17 3 l-13 -10 l-2 -15 z" fill="#8a7566" stroke="#ffd9bf" stroke-width="2" stroke-linejoin="round"/>
+          <circle cx="58" cy="54" r="4" fill="#5b4a3f"/><circle cx="68" cy="64" r="2.5" fill="#5b4a3f"/>
+        </svg>
+      </button>
+      <svg class="hint" id="hint" viewBox="0 0 170 110" aria-hidden="true">
+        <path d="M34 22 C58 6 128 4 150 26 C168 46 156 76 124 84 C96 92 62 90 44 78 L14 92 L28 66 C16 52 18 34 34 22 Z" fill="#F4F7FA" stroke="#0B1426" stroke-width="3.5" stroke-linejoin="round"/>
+        <path d="M40 27 C62 13 122 11 144 30" fill="none" stroke="#0B1426" stroke-width="1.5" stroke-linecap="round" opacity=".5"/>
+        <text x="92" y="64" text-anchor="middle">click</text>
+      </svg>
+      <div class="orb mars mars-big hit"><span class="crater" id="crater"></span><span class="boom" id="boom" aria-hidden="true"></span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 7. RESULTS & NEXT STEPS ================= -->
+<section class="slide" id="s7" aria-label="Slide 7 of 7: Current results and next steps">
+  <p class="kicker" data-in>07 · Results &amp; next steps</p>
+  <h2 data-in style="--i:1">A working prototype, honestly labelled</h2>
+  <div class="cols">
+    <div class="status-grid">
+      <div class="card" data-in style="--i:2"><h3>Done <span class="tag ok">live</span></h3><p>Public demo with Globe, Map and Analysis views. 12 × 6 site pairs scored.</p></div>
+      <div class="card wip" data-in style="--i:3"><h3>Still in progress</h3><p>Deployment other methods of evaluation</p></div>
+      <div class="card" data-in style="--i:4"><h3>Next steps</h3><p>Establish more essential data to compare. Assess confirmity.</p></div>
+      <div class="card" data-in style="--i:5"><h3>Why we can continue</h3><p>Expanding features and Implementation in study. </p></div>
+    </div>
+    <div class="side">
+      <div class="card result" data-in style="--i:3">
+        <h3>Top match so far <span class="tag wip">preliminary</span></h3>
+        <div class="big">0.78</div>
+        <p>Sossusvlei dunes, Namibia ↔ Gale crater, Mars</p>
+        <div class="bars" role="img" aria-label="Similarity by criterion for Sossusvlei dunes versus Gale crater: mean temperature 0.72, temperature range 0.75, craters 0.31, slope 0.70, relief 0.90, ice 0.82, sunlight 0.98, rock 1.00">
+          <div class="bar"><span>Mean temp</span><i style="--v:.72"></i><span>0.72</span></div>
+          <div class="bar"><span>Temp range</span><i style="--v:.75"></i><span>0.75</span></div>
+          <div class="bar"><span>Craters</span><i style="--v:.31"></i><span>0.31</span></div>
+          <div class="bar"><span>Slope</span><i style="--v:.70"></i><span>0.70</span></div>
+          <div class="bar"><span>Relief</span><i style="--v:.90"></i><span>0.90</span></div>
+          <div class="bar"><span>Ice</span><i style="--v:.82"></i><span>0.82</span></div>
+          <div class="bar"><span>Sunlight</span><i style="--v:.98"></i><span>0.98</span></div>
+          <div class="bar"><span>Rock</span><i style="--v:1"></i><span>1.00</span></div>
+        </div>
+      </div>
+      <figure class="media team-photo missing" data-in style="--i:5">
+        <!-- FILE: assets/team.jpg (landscape team photo) → then set CONFIG.paths.teamPhoto -->
+        <img data-src="paths.teamPhoto" alt="Team photo">
+        <span class="ph">INSERT: team photo (assets/team.jpg, landscape)</span>
+      </figure>
+    </div>
+  </div>
+</section>
+
+</div>
+</main>
+
+<!-- ================= Navigation ================= -->
+<nav class="controls" aria-label="Slide navigation">
+  <button class="ctl" id="prev" type="button" aria-label="Previous slide">←</button>
+  <div class="dots" id="dots"></div>
+  <span class="counter" id="counter" aria-live="polite">1/7</span>
+  <button class="ctl" id="next" type="button" aria-label="Next slide">→</button>
+  <span class="spacer"></span>
+  <button class="ctl" id="bgToggle" type="button" aria-pressed="true" title="Toggle background animation (B)">Animation: on</button>
+  <button class="ctl" id="fsToggle" type="button" title="Toggle fullscreen (F)">Fullscreen</button>
+</nav>
+
+<script>
+(function () {
+  'use strict';
+  var CFG = window.CONFIG;
+  var $ = function (s, r) { return (r || document).querySelector(s); };
+  var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
+  var get = function (path) { return path.split('.').reduce(function (o, k) { return o ? o[k] : undefined; }, CFG); };
+  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---------- 1. Fill text + media from CONFIG (empty value = placeholder stays) ---------- */
+  $$('[data-cfg]').forEach(function (el) {
+    var v = get(el.dataset.cfg);
+    if (!v) return;
+    el.classList.remove('ph-inline');
+    if (el.dataset.cfg === 'team.email') {
+      var a = document.createElement('a'); a.href = 'mailto:' + v; a.textContent = v; el.textContent = ''; el.appendChild(a);
+    } else { el.textContent = v; }
+  });
+  $$('img[data-src]').forEach(function (img) {
+    var box = img.closest('.media'), v = get(img.dataset.src);
+    if (!v) { if (box) box.classList.add('missing'); return; }
+    img.addEventListener('error', function () { if (box) box.classList.add('missing'); });
+    img.addEventListener('load', function () { if (box && box.id !== 'demoVideoBox') box.classList.remove('missing'); });
+    img.src = v;
+  });
+
+  /* ---------- 2. Constellation: 4 stars = 4 team members ---------- */
+  (function () {
+    var box = $('#constellation'), pts = [[80, 150], [235, 70], [390, 170], [540, 90]];
+    CFG.team.members.slice(0, 4).forEach(function (m, i) {
+      var n = i + 1, x = pts[i][0], y = pts[i][1];
+      var btn = document.createElement('button');
+      btn.type = 'button'; btn.className = 'star-btn'; btn.style.left = x + 'px'; btn.style.top = y + 'px';
+      btn.setAttribute('aria-label', (m.name || 'Team member ' + n) + (m.role ? ', ' + m.role : '') + '. Decorative: drop stardust');
+      var lab = document.createElement('div');
+      lab.className = 'star-label'; lab.style.left = x + 'px'; lab.style.top = (y + 34) + 'px';
+      lab.innerHTML = (m.name ? '<span></span>' : '<span class="ph-inline">INSERT: member ' + n + ' name</span>') +
+                      '<span class="role">' + (m.role ? '' : 'INSERT: role') + '</span>';
+      if (m.name) lab.firstChild.textContent = m.name;
+      if (m.role) lab.lastChild.textContent = m.role;
+      var on = function () { lab.classList.add('on'); }, off = function () { lab.classList.remove('on'); };
+      btn.addEventListener('mouseenter', on); btn.addEventListener('mouseleave', off);
+      btn.addEventListener('focus', on); btn.addEventListener('blur', off);
+      btn.addEventListener('click', function () {          // stardust
+        if (reduced) return;
+        for (var k = 0; k < 16; k++) {
+          var d = document.createElement('i'); d.className = 'dust';
+          d.style.left = x + 'px'; d.style.top = y + 'px';
+          d.style.setProperty('--dx', (Math.random() * 90 - 45) + 'px');
+          d.style.setProperty('--dy', (70 + Math.random() * 150) + 'px');
+          d.style.setProperty('--t', (0.9 + Math.random() * 0.9) + 's');
+          if (k % 3 === 0) d.style.background = CFG.colors.earth;
+          box.appendChild(d);
+          d.addEventListener('animationend', function (e) { e.target.remove(); });
+        }
+      });
+      box.appendChild(btn); box.appendChild(lab);
+    });
+  })();
+
+  /* ---------- 3. Slide engine ---------- */
+  var slides = $$('.slide'), N = slides.length, cur = -1;
+  var dots = $('#dots'), counter = $('#counter');
+  slides.forEach(function (s, i) {
+    var b = document.createElement('button');
+    b.type = 'button'; b.setAttribute('aria-label', 'Go to slide ' + (i + 1));
+    b.addEventListener('click', function () { go(i); });
+    dots.appendChild(b);
+  });
+  function go(i, silent) {
+    i = Math.max(0, Math.min(N - 1, i));
+    if (i === cur) return;
+    cur = i;
+    slides.forEach(function (s, k) {
+      s.classList.toggle('active', k === i);
+      s.classList.toggle('before', k < i);
+      if (k === i) s.removeAttribute('inert'); else s.setAttribute('inert', '');
+    });
+    $$('button', dots).forEach(function (b, k) { b.setAttribute('aria-current', k === i ? 'true' : 'false'); });
+    counter.textContent = (i + 1) + '/' + N;
+    document.documentElement.style.setProperty('--shift', i);
+    if (!silent && location.hash !== '#' + (i + 1)) history.replaceState(null, '', '#' + (i + 1));
+    if (i === 3) demo.enter();
+  }
+  function fromHash() { var n = parseInt(location.hash.slice(1), 10); return n >= 1 && n <= N ? n - 1 : 0; }
+  window.addEventListener('hashchange', function () { go(fromHash(), true); });
+  $('#prev').addEventListener('click', function () { go(cur - 1); });
+  $('#next').addEventListener('click', function () { go(cur + 1); });
+
+  document.addEventListener('keydown', function (e) {
+    if (e.altKey || e.ctrlKey || e.metaKey) return;
+    var onControl = /^(BUTTON|A|INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName);
+    switch (e.key) {
+      case 'ArrowRight': case 'ArrowDown': case 'PageDown': go(cur + 1); e.preventDefault(); break;
+      case 'ArrowLeft': case 'ArrowUp': case 'PageUp': go(cur - 1); e.preventDefault(); break;
+      case ' ': if (!onControl) { go(cur + (e.shiftKey ? -1 : 1)); e.preventDefault(); } break;
+      case 'Home': go(0); break;
+      case 'End': go(N - 1); break;
+      case 'f': case 'F': toggleFs(); break;
+      case 'b': case 'B': toggleBg(); break;
+    }
+  });
+
+  // swipe
+  var tx = null, ty = null;
+  document.addEventListener('touchstart', function (e) { tx = e.touches[0].clientX; ty = e.touches[0].clientY; }, { passive: true });
+  document.addEventListener('touchend', function (e) {
+    if (tx === null) return;
+    var dx = e.changedTouches[0].clientX - tx, dy = e.changedTouches[0].clientY - ty; tx = null;
+    if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.5) go(cur + (dx < 0 ? 1 : -1));
+  }, { passive: true });
+
+  // responsive 16:9 stage
+  function fit() {
+    var w = window.innerWidth, h = window.innerHeight - 56;
+    document.documentElement.style.setProperty('--s', Math.min(w / 1600, h / 900));
+  }
+  window.addEventListener('resize', fit); fit();
+
+  // fullscreen
+  function toggleFs() {
+    var d = document, el = d.documentElement;
+    if (d.fullscreenElement || d.webkitFullscreenElement) (d.exitFullscreen || d.webkitExitFullscreen).call(d);
+    else { var r = el.requestFullscreen || el.webkitRequestFullscreen; if (r) { var p = r.call(el); if (p && p.catch) p.catch(function () {}); } }
+  }
+  $('#fsToggle').addEventListener('click', toggleFs);
+
+  /* ---------- 4. Live demo iframe with video fallback (slide 4) ---------- */
+  var demo = (function () {
+    var frame = $('#demoFrame'), vbox = $('#demoVideoBox'), video = $('#demoVideo'), status = $('#demoStatus');
+    var bLive = $('#modeLive'), bVideo = $('#modeVideo'), started = false, timer = null, loaded = false;
+    $('#openDemo').href = CFG.demoUrl;
+    if (CFG.paths.demoVideo) {
+      video.addEventListener('error', function () { vbox.classList.add('missing'); video.hidden = true; });
+      video.addEventListener('loadeddata', function () { vbox.classList.remove('missing'); $('img', vbox).hidden = true; });
+    } else { video.hidden = true; vbox.classList.add('missing'); }
+
+    function mode(m, why) {
+      var live = m === 'live';
+      bLive.setAttribute('aria-pressed', live); bVideo.setAttribute('aria-pressed', !live);
+      frame.hidden = !live; vbox.hidden = live;
+      if (live) {
+        video.pause();
+        if (!frame.getAttribute('src')) {
+          loaded = false; frame.src = CFG.demoUrl;
+          clearTimeout(timer);
+          timer = setTimeout(function () { if (!loaded) mode('video', 'Live demo did not load. Showing the recorded version.'); }, CFG.iframeTimeoutMs);
+        }
+        status.textContent = 'Live prototype. It is interactive: try clicking a point.';
+      } else {
+        if (CFG.paths.demoVideo) { if (!video.getAttribute('src')) video.src = CFG.paths.demoVideo; var p = video.play(); if (p && p.catch) p.catch(function () {}); }
+        status.textContent = why || 'Recorded demo.';
+      }
+    }
+    frame.addEventListener('load', function () { if (frame.getAttribute('src')) { loaded = true; clearTimeout(timer); } });
+    bLive.addEventListener('click', function () { mode('live'); });
+    bVideo.addEventListener('click', function () { mode('video'); });
+    window.addEventListener('offline', function () { if (started) mode('video', 'No internet. Showing the recorded version.'); });
+    return { enter: function () {
+      if (started) return; started = true;
+      if (navigator.onLine === false || !window.fetch) { mode('video', 'No internet. Showing the recorded version.'); return; }
+      // Probe the demo host first: a failed iframe load cannot be detected reliably.
+      mode('video', 'Connecting to the live demo…');
+      var ctl = window.AbortController ? new AbortController() : null;
+      var to = setTimeout(function () { if (ctl) ctl.abort(); }, CFG.iframeTimeoutMs);
+      fetch(CFG.demoUrl, { mode: 'no-cors', cache: 'no-store', signal: ctl ? ctl.signal : undefined })
+        .then(function () { clearTimeout(to); mode('live'); })
+        .catch(function () { clearTimeout(to); mode('video', 'Live demo is unreachable. Showing the recorded version.'); });
+    } };
+  })();
+
+  /* ---------- 5. Meteorite -> Mars (slide 6) ---------- */
+  (function () {
+    var m = $('#meteor'), hint = $('#hint'), crater = $('#crater'), boom = $('#boom'), busy = false;
+    m.addEventListener('click', function () {
+      if (busy) return; busy = true;
+      hint.classList.add('hide');                       // hint disappears after the first click
+      if (reduced) { crater.classList.add('on'); busy = false; return; }
+      var a = m.getBoundingClientRect(), b = crater.getBoundingClientRect();
+      var sc = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--s')) || 1;
+      m.style.setProperty('--mx', ((b.left + b.width / 2) - (a.left + a.width / 2)) / sc + 'px');
+      m.style.setProperty('--my', ((b.top + b.height / 2) - (a.top + a.height / 2)) / sc + 'px');
+      m.classList.add('fly');
+      setTimeout(function () {                          // impact
+        crater.classList.add('on');
+        boom.innerHTML = '<span class="ring"></span>';
+        for (var k = 0; k < 12; k++) {
+          var p = document.createElement('i'), a = Math.random() * Math.PI * 2, r = 40 + Math.random() * 70;
+          p.style.setProperty('--dx', Math.cos(a) * r + 'px'); p.style.setProperty('--dy', (Math.sin(a) * r - 30) + 'px');
+          boom.appendChild(p);
+        }
+      }, 850);
+      setTimeout(function () {                          // reset so it can be launched again
+        boom.innerHTML = ''; m.classList.remove('fly'); m.classList.add('gone');
+        requestAnimationFrame(function () { requestAnimationFrame(function () { m.classList.remove('gone'); busy = false; }); });
+      }, 2600);
+    });
+  })();
+
+  /* ---------- 6. Starfield canvas (3 parallax layers, light on CPU) ---------- */
+  var bgOn = true;
+  var sky = (function () {
+    var c = $('#sky'), ctx = c.getContext('2d'), W = 0, H = 0, dpr = 1, stars = [], raf = null;
+    var mx = 0, my = 0, px = 0, py = 0, shift = 0, t0 = 0, shoot = null, sat = { x: -50, y: 0.3 };
+    function size() {
+      dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+      W = c.clientWidth; H = c.clientHeight; c.width = W * dpr; c.height = H * dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      var n = Math.min(260, Math.round(W * H / 6500)); stars = [];
+      for (var i = 0; i < n; i++) {
+        var layer = i % 3;                                  // 0 = far, 2 = near
+        stars.push({ x: Math.random() * W, y: Math.random() * H, r: 0.5 + layer * 0.45 + Math.random() * 0.5,
+          l: layer, ph: Math.random() * 6.28, sp: 0.6 + Math.random() * 1.4,
+          col: Math.random() < 0.12 ? '34,197,214' : (Math.random() < 0.08 ? '255,138,61' : '244,247,250') });
+      }
+    }
+    function draw(t) {
+      var time = t / 1000, dt = Math.min(0.05, time - t0 || 0.016); t0 = time;
+      px += (mx - px) * 0.05; py += (my - py) * 0.05; shift += (curShift() - shift) * 0.06;
+      ctx.clearRect(0, 0, W, H);
+      for (var i = 0; i < stars.length; i++) {
+        var s = stars[i], k = (s.l + 1) * 10;
+        var x = ((s.x - px * k - shift * k * 4 - time * (s.l + 1) * 1.2) % W + W) % W;
+        var y = ((s.y - py * k) % H + H) % H;
+        var a = 0.45 + 0.4 * Math.sin(s.ph + time * s.sp);
+        ctx.fillStyle = 'rgba(' + s.col + ',' + a.toFixed(2) + ')';
+        ctx.beginPath(); ctx.arc(x, y, s.r, 0, 6.283); ctx.fill();
+      }
+      // small satellite drifting across
+      sat.x += dt * 26; if (sat.x > W + 60) { sat.x = -60; sat.y = 0.15 + Math.random() * 0.5; }
+      var sy = sat.y * H + Math.sin(sat.x / 90) * 6;
+      ctx.fillStyle = 'rgba(201,209,219,.85)'; ctx.fillRect(sat.x - 2, sy - 2, 4, 4);
+      ctx.fillStyle = 'rgba(34,197,214,.75)'; ctx.fillRect(sat.x - 9, sy - 1, 6, 2); ctx.fillRect(sat.x + 3, sy - 1, 6, 2);
+      // occasional shooting star
+      if (!shoot && Math.random() < dt / 7) shoot = { x: Math.random() * W * 0.8, y: Math.random() * H * 0.4, life: 0 };
+      if (shoot) {
+        shoot.life += dt; shoot.x += dt * 620; shoot.y += dt * 250;
+        var al = Math.max(0, 1 - shoot.life / 0.7), g = ctx.createLinearGradient(shoot.x, shoot.y, shoot.x - 90, shoot.y - 36);
+        g.addColorStop(0, 'rgba(244,247,250,' + al + ')'); g.addColorStop(1, 'rgba(244,247,250,0)');
+        ctx.strokeStyle = g; ctx.lineWidth = 1.6; ctx.beginPath(); ctx.moveTo(shoot.x, shoot.y); ctx.lineTo(shoot.x - 90, shoot.y - 36); ctx.stroke();
+        if (shoot.life > 0.7) shoot = null;
+      }
+      raf = (bgOn && !reduced && !document.hidden) ? requestAnimationFrame(draw) : null;
+    }
+    function curShift() { return cur < 0 ? 0 : cur; }
+    function start() { if (!raf) raf = requestAnimationFrame(draw); }
+    window.addEventListener('resize', function () { size(); if (!raf) draw(performance.now()); });
+    window.addEventListener('mousemove', function (e) { mx = e.clientX / W - 0.5; my = e.clientY / H - 0.5; }, { passive: true });
+    document.addEventListener('visibilitychange', function () { if (!document.hidden && bgOn && !reduced) start(); });
+    size();
+    return { start: start, still: function () { draw(performance.now()); } };
+  })();
+
+  function toggleBg() {
+    bgOn = !bgOn;
+    document.body.classList.toggle('bg-off', !bgOn);
+    var b = $('#bgToggle'); b.setAttribute('aria-pressed', bgOn); b.textContent = 'Animation: ' + (bgOn ? 'on' : 'off');
+    if (bgOn && !reduced) sky.start();
+  }
+  $('#bgToggle').addEventListener('click', toggleBg);
+
+  /* ---------- 7. Boot ---------- */
+  go(fromHash(), true);
+  if (reduced) sky.still(); else sky.start();
+})();
+</script>
+</body>
+</html>
